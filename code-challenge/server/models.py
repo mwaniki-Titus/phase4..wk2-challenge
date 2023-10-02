@@ -1,3 +1,4 @@
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.orm import validates
@@ -40,3 +41,20 @@ class Power(db.Model, SerializerMixin):
             raise ValueError("Description must contain at least 20 characters.")
         else:
             return description
+
+class Hero_power(db.Model, SerializerMixin):
+    __tablename__ = 'hero_powers'
+
+    id = db.Column(db.Integer, primary_key=True)
+    strength = db.Column(db.String)
+    hero_id = db.Column(db.Integer, db.ForeignKey('heroes.id'))
+    power_id = db.Column(db.Integer, db.ForeignKey('powers.id'))
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime, onupdate=db.func.now())
+
+    @validates('strength')
+    def validates_strength(self, key, strength):
+        if(strength not in ['Strong', 'Weak', 'Average']):
+            raise ValueError("Strength must be either: 'Strong', 'Weak' or 'Average'")
+        else:
+            return strength
